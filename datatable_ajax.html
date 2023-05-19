@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Card Data</title>
+    <title>Brewery Data</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
 </head>
 <body>
-    <table id="cardTable" class="display">
+    <table id="breweryTable" class="display">
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Category</th>
-                <th>Steam AppID</th>
-                <th>Image URL</th>
+                <th>Type</th>
+                <th>Street</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+                <th>Phone</th>
+                <th>Website</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -21,16 +26,21 @@
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#cardTable').DataTable({
+            $('#breweryTable').DataTable({
                 ajax: {
-                    url: 'https://barter.vg/browse/cards/json',
+                    url: 'https://api.openbrewerydb.org/breweries',
                     dataSrc: '',
                 },
                 columns: [
                     { data: 'name' },
-                    { data: 'category' },
-                    { data: 'appid' },
-                    { data: 'image' }
+                    { data: 'brewery_type' },
+                    { data: 'street' },
+                    { data: 'city' },
+                    { data: 'state' },
+                    { data: 'postal_code' },
+                    { data: 'country' },
+                    { data: 'phone' },
+                    { data: 'website_url' },
                 ],
             });
         });
