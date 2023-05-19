@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Brewery</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <style>
+        /* CSS styles for the form */
+        .form-container {
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .form-container input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Add Brewery</h2>
+        <form id="breweryForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <div id="nameError" class="error"></div>
+
+            <label for="brewery_type">Brewery Type:</label>
+            <input type="text" id="brewery_type" name="brewery_type" required>
+            <div id="breweryTypeError" class="error"></div>
+
+            <label for="street">Street:</label>
+            <input type="text" id="street" name="street" required>
+            <div id="streetError" class="error"></div>
+
+            <label for="city">City:</label>
+            <input type="text" id="city" name="city" required>
+            <div id="cityError" class="error"></div>
+
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" required>
+            <div id="stateError" class="error"></div>
+
+            <label for="postal_code">Postal Code:</label>
+            <input type="text" id="postal_code" name="postal_code" required>
+            <div id="postalCodeError" class="error"></div>
+
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" required>
+            <div id="countryError" class="error"></div>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" required>
+            <div id="phoneError" class="error"></div>
+
+            <label for="website_url">Website URL:</label>
+            <input type="text" id="website_url" name="website_url" required>
+            <div id="websiteUrlError" class="error"></div>
+
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <table id="breweryTable" class="display">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Street</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal Code</th>
+                <th>Country</th>
+                <th>Phone</th>
+                <th>Website</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            var breweryTable = $('#breweryTable').DataTable({
+                ajax: {
+                    url: 'https://api.openbrewerydb.org/breweries',
+                    dataSrc: '',
+                },
+                columns: [
+                    {  "data": 'name' },
+                    {  "data": 'brewery_type' },
+                    { "data": 'street' },
+                    {  "data": 'city' },
+                    {  "data": 'state' },
+                    {  "data": 'postal_code' },
+                    {  "data": 'country' },
+                    { "data": 'phone' },
+                    { "data": 'website_url' },
+                ],
+            });
+
+            // Handle form submission
+            $('#breweryForm').submit(function(e) {
+                e.preventDefault();
+               
+                if (validateForm()) {
+                    // Get form data
+                    var formData = {
+                        name: $('#name').val(),
+                        brewery_type: $('#brewery_type').val(),
+                        street: $('#street').val(),
+                        city: $('#city').val(),
+                        state: $('#state').val(),
+                        postal_code: $('#postal_code').val(),
+                        country: $('#country').val(),
+                        phone: $('#phone').val(),
+                        website_url: $('#website_url').val(),
+                    };
+
+                    // Send data to API
+                    $.ajax({
+                        url: 'https://api.openbrewerydb.org/breweries',
+                        type: 'POST',
+                        data: JSON.stringify(formData),
+                        contentType: 'application/json',
+                        success: function() {
+                            // Clear form input values
+                            $('#breweryForm')[0].reset();
+
+                            // Refresh DataTable with updated data
+                            breweryTable.ajax.reload(null, false);
+                        },
+                        error: function() {
+                            alert('An error occurred while adding the brewery.');
+                        }
+                    });
+                }
+            });
+
+            function validateForm() {
+                // Reset error messages
+                $('.error').text('');
+                var isValid = true;
+
+                // Perform validation for each input field
+                if ($('#name').val() === '') {
+                    $('#nameError').text('Please enter a name.');
+                    isValid = false;
+                }
+
+                if ($('#brewery_type').val() === '') {
+                    $('#breweryTypeError').text('Please enter a brewery type.');
+                    isValid = false;
+                }
+
+                if ($('#street').val() === '') {
+                    $('#streetError').text('Please enter a street.');
+                    isValid = false;
+                }
+
+                if ($('#city').val() === '') {
+                    $('#cityError').text('Please enter a city.');
+                    isValid = false;
+                }
+
+                if ($('#state').val() === '') {
+                    $('#stateError').text('Please enter a state.');
+                    isValid = false;
+                }
+
+                if ($('#postal_code').val() === '') {
+                    $('#postalCodeError').text('Please enter a postal code.');
+                    isValid = false;
+                }
+
+                if ($('#country').val() === '') {
+                    $('#countryError').text('Please enter a country.');
+                    isValid = false;
+                }
+
+                if ($('#phone').val() === '') {
+                    $('#phoneError').text('Please enter a phone number.');
+                    isValid = false;
+                } else if (!isValidPhone($('#phone').val())) {
+                    $('#phoneError').text('Please enter a valid phone number.');
+                    isValid = false;
+                }
+
+                if ($('#website_url').val() === '') {
+                    $('#websiteUrlError').text('Please enter a website URL.');
+                    isValid = false;
+                } else if (!isValidUrl($('#website_url').val())) {
+                    $('#websiteUrlError').text('Please enter a valid website URL.');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            console.log(nameInput, brewery_typeInput, streetInput, cityInput, stateInput, postal_codeInput, countryInput, phoneInput, website_urlInput);
+                if (isValid){
+                    DataTable.row.add({
+                        "name" : nameInput,
+                        "brewerly_type" : brewery_typeInput,
+                        "street" : streetInput, 
+                        "city" : cityInput, 
+                        "state" : stateInput, 
+                        "postal_code" : postal_codeInput, 
+                        "country" : countryInput, 
+                        "phone" : phoneInput, 
+                        "website_url" : website_urlInput 
+                    }).draw(false);
+
+            function isValidPhone(phone) {
+                // Phone number validation logic (modify as per your requirements)
+                var phoneRegex = /^\d{10}$/;
+                return phoneRegex.test(phone);
+            }
+
+            function isValidUrl(url) {
+                // Website URL validation logic (modify as per your requirements)
+                var urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+                return urlRegex.test(url);
+            }
+        });
+    </script>
+</body>
+</html>
